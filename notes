@@ -1,0 +1,5 @@
+in mac terminal:
+- cd info3300-hw
+- cd [hw file name]
+- python -m http.server
+- go to localhost:8000 on chrome
