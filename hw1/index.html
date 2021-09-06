@@ -17,7 +17,11 @@
         B. <script> 
             console.log(typeof(2));
         </script>
-        C. Strange behavior for number is type coercion - for example, 1 + "2" results in 12. Also, irrational numbers such as pi are also type number.
+        C. Strange behavior for number is irrational numbers such as pi are type number. Also, there is no separate type for floats - both floats and integers are type number.
+        <script>
+            console.log(typeof(Math.PI));
+            console.log(typeof(1.334));
+        </script>
 
         b) int is not a canonical type. Int is type number.
 
@@ -31,11 +35,61 @@
 
         g) regex is not a canonical type - it is type object.
 
-        h) A. string is a canonical type.
+        h) A. String is a canonical type.
         B. <script>
             console.log(typeof("info3300"));
         </script>
-        C. 
+        C. Unexpected behavior is type coercion - for example, adding a number and a string results in a string. 
+        <script>
+            console.log(typeof(1+"2"));
+        </script>
+
+        i) A. Boolean is a canonical type.
+        B. <script>
+            console.log(typeof(true));
+        </script>
+        C. Unexpected behavior is that booleans can be added as if they are numbers, with false having the value of 0 and true having the value 1.
+        <script>
+            console.log(typeof(true + 5));
+        </script>
+
+        j) Object is a canonical type. 
+        B. <script>
+            console.log(typeof(new Object()));
+        </script>
+        C. ????
+
+        k) A. null is a canonical type.
+        B. <script>
+            console.log(typeof(null));
+        </script>
+        C. The console shows null as type object, when the type is actually null.
+
+        l) Function is not a canonical type - it is type object.
+    </p>
+
+    <p id="p3">
+        Problem 3:
+        Type coercion is when a value is changed from one type to another, such as a number to a string, which might produce unexpected results.
+        For example, 1 + "4" results in the number 1 being converted to a type string, producing the answer "14". This is unexpected because this type of operation would normally throw an exception,
+        but here results in string concatenation.
+
+        In another example, true + 3 results in the answer 4. Here, the boolean value true is converted into the type number with the value of 1.
+        The values are then added as numbers, resulting in 4. This is unexpected because the addition of a boolean and numerical value would typically 
+        throw an exception.
+
+        <script>
+            console.log(1 + "4");
+            console.log(true + 3);
+        </script>
 
     </p>
+
+    <p id="p4">
+        Problem 4:
+        Any work that is submitted after the submission deadline will receive a score of 0. There is a slip day policy in which the deadline can be extended, and students have a total of 
+        5 slip days to use for the semester. If an unreadable, decompressed, or incorrect file is uploaded, this assignment will also receive a score of 0. The 
+        lowest 2 homework grades will also be dropped.
+    </p>
+
   </body></html>
