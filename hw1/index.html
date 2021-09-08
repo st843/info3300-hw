@@ -27,7 +27,7 @@
 
         c) Unicode is not a canonical type. Unicode is type string.
 
-        d) Array is not a canonical type. Array is an object.
+        d) Array is not a canonical type. Array is an object. Unexpected behavior is that arrays can be mapped to form dictionaries.
 
         e) Char is not a canonical type - it is type string.
 
@@ -57,7 +57,11 @@
         B. <script>
             console.log(typeof(new Object()));
         </script>
-        C. ????
+        C. Data structures, such as arrays, are considered objects and not simply data structures. 
+        <script>
+            let arr = [5, 7, 11];
+            console.log(typeof(arr));
+        </script>
 
         k) A. null is a canonical type.
         B. <script>
