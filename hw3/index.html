@@ -1,0 +1,83 @@
+<html>
+    <head>
+        <meta charset="UTF-8">
+        <title>INFO 3300 HW 3</title>
+        <script src="https://d3js.org/d3.v7.min.js"></script>
+    </head>
+<body>
+    <p id="p1">
+        <svg width="300" height="300" id="problem1">
+
+        </svg>
+
+        <script>
+            let svg=d3.select("svg#problem1");
+            let width=svg.attr("width");
+            let height=svg.attr("height");
+
+
+            svg.append("circle")
+                .attr("cx", 150)
+                .attr("cy", 150)
+                .attr("r", 4)
+                .style("fill", "lightpink")
+                .attr("stroke-width", 0);
+
+            svg.append("text")
+                .attr("x", width/2.0)
+                .attr("y", height/2.0)
+                .attr("text-anchor", "middle")
+                .attr("font-size", "20px")
+                .attr("font-family", "verdana")
+                .text("INFO3300");
+            
+            svg.append("rect")
+                .attr("x", 112)
+                .attr("y", 50)
+                .attr("height", height/5.0)
+                .attr("width", width/5.7)
+                .attr("stroke", "red")
+                .attr("stroke-width", "3px")
+                .style("fill", "lightgreen");
+
+            svg.append("rect")
+                .attr("x", 220)
+                .attr("y", 180)
+                .attr("height", 20)
+                .attr("width", 50)
+                .attr("stroke", "goldenrod")
+                .attr("stroke-width", "7px")
+                .style("fill", "blue");
+            
+            svg.append("rect")
+                .attr("x", 5)
+                .attr("y", 262)
+                .attr("height", 31)
+                .attr("width", 100)
+                .attr("stroke", "orange")
+                .attr("stroke-width", "2px")
+                .style("fill", "skyblue");
+        </script>
+    </p>
+    <p id="p2">
+        <svg id="problem2" width=360 height=360 style="border: 1px solid lightgrey">
+
+        </svg>
+        <script>
+            const svg2 = d3.select("svg#problem2");
+            const width2 = svg2.attr("width");
+            const height2 = svg2.attr("height");
+            const margin = {top:20, left:20, right:20, bottom:20};
+
+            const graphWidth = width2 - margins.left - margins.right;
+            const graphHeight = height2 - margins.top - margins.bottom;
+
+            const xScale = d3.scaleLinear().domain([0,10]).range([0, graphWidth]);
+            const yScale = d3.scaleLinear().domain([0,10]).range([0, graphHeight]);
+
+            
+
+        </script>
+    </p>
+</body>
+</html>
