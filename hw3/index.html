@@ -69,13 +69,58 @@
             const height2 = svg2.attr("height");
             const margin = {top:20, left:20, right:20, bottom:20};
 
-            const graphWidth = width2 - margins.left - margins.right;
-            const graphHeight = height2 - margins.top - margins.bottom;
+            const graphWidth = width2 - margin.right;
+            const graphHeight = height2 - margin.bottom;
 
-            const xScale = d3.scaleLinear().domain([0,10]).range([0, graphWidth]);
-            const yScale = d3.scaleLinear().domain([0,10]).range([0, graphHeight]);
+            const xScale = d3.scaleLinear().domain([0,10]).range([margin.left, graphWidth]);
+            const yScale = d3.scaleLinear().domain([0,10]).range([margin.top, graphHeight]);
 
+            for (let i = 0; i<11; i++) {
+                svg2.append("line")
+                    .attr("x1", xScale(i))
+                    .attr("x2", xScale(i))
+                    .attr("y1", yScale(0))
+                    .attr("y2", yScale(10))
+                    .style("stroke", "grey")
+                    .style("stroke-width", "1px");        
+            }
             
+            for (let j=0; j<11; j++) {
+                svg2.append("line")
+                    .attr("x1", xScale(0))
+                    .attr("x2", xScale(10))
+                    .attr("y1", yScale(j))
+                    .attr("y2", yScale(j))
+                    .style("stroke", "grey")
+                    .style("stroke-width", "1px");
+            }
+
+            let textlabels = [0, 5, 10];
+
+            textlabels.forEach( k => {
+                svg2.append("text")
+                    .attr("x", xScale(k))
+                    .attr("y", graphHeight + 3)
+                    .attr("text-anchor", "middle")
+                    .attr("font-size", "13px")
+                    .attr("font-family", "arial")
+                    .attr("dominant-baseline", "hanging")
+                    .text(k)
+
+            });
+
+            let reverselabels = [10, 5, 0];
+
+            textlabels.forEach( (l, i) => {
+                svg2.append("text")
+                    .attr("x", margin.left-9)
+                    .attr("y", yScale(l))
+                    .attr("text-anchor", "middle")
+                    .attr("font-size", "13px")
+                    .attr("font-family", "arial")
+                    .attr("dominant-baseline", "middle")
+                    .text(reverselabels[i])
+            });
 
         </script>
     </p>
