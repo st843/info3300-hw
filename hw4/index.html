@@ -1,3 +1,71 @@
 <html>
+<head>
+    <title> INFO 3300 - HW 4</title>
+    <meta charset="UTF-8" />
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <style>
+        .gridlines line {
+            stroke: #bbb;
+        }
     
+        .gridlines .domain {
+                stroke: none;
+            }
+    </style>
+
+</head>
+
+<body> 
+    <p id='p1'>
+        <div id='svgp1'>
+            <svg id='svg1' height='400' width='400'>
+            </svg>
+        </div>
+        <script>
+
+            // setting up svg
+            const svg = d3.select('svg#svg1');
+            const width = svg.attr('width');
+            const height = svg.attr('height');
+            const margins = {top: 5, right: 5, bottom: 0, left: 0};
+            const chartWidth = width - margins.right;
+            const chartHeight = height - margins.top;
+
+
+            d3.json('../diamonds.json').then( (data) => {
+
+                // creating linear scales
+                let caratMax = d3.max(data, d => d['carat']);
+                let priceMax = d3.max(data, d => d['price']);
+                const xScale = d3.scaleLinear().domain( [0, caratMax]).range([0, chartWidth]);
+                const yScale = d3.scaleLinear().domain( [0, priceMax]).range([chartHeight, 0]);
+
+                // creating gridlines
+                
+
+                
+            });
+
+                // tried doing tick trick but it didn't work
+
+                // let leftGrid = d3.axisLeft(yScale)
+                //                  .tickSize(-chartWidth-10)
+                //                  .tickFormat('');
+                // svg.append('g').attr('class', 'y gridlines')
+                //                .attr('transform', `translate(${margins.left-10}, ${margins.top})`)
+                //                .call(leftGrid);
+                
+                // let bottomGrid = d3.axisBottom(xScale)
+                //                     .tickSize(-chartHeight-10)
+                //                     .tickFormat('');
+                // svg.append('g').attr('class', 'x gridlines')
+                //                .call(bottomGrid);
+
+        </script>
+        
+    </p>
+    
+</body>
+
 </html>
