@@ -17,11 +17,18 @@
 </head>
 
 <body> 
+    <h3>Srishti Tyagi st843</h3>
     <p id='p1'>
         <div id='svgp1'>
             <svg id='svg1' height='400' width='400'>
             </svg>
         </div>
+
+        <div id='partD'>
+            <svg id='svg2' height=400 width=400>
+            </svg>
+        </div>
+
         <script>
 
             // setting up svg
@@ -31,7 +38,8 @@
             const margins = {top: 5, right: 5, bottom: 0, left: 0};
             const chartWidth = width - margins.right;
             const chartHeight = height - margins.top;
-
+            const chartArea = svg.append('g')
+                          .attr('transform', `translate(${margins.left}, ${margins.top})`);
 
             d3.json('../diamonds.json').then( (data) => {
 
@@ -42,30 +50,62 @@
                 const yScale = d3.scaleLinear().domain( [0, priceMax]).range([chartHeight, 0]);
 
                 // creating gridlines
+                for (let i = 0; i<= caratMax; i++) {
+                    chartArea.append("line")
+                        .attr("x1", xScale(i))
+                        .attr("x2", xScale(i))
+                        .attr("y1", yScale(0))
+                        .attr("y2", yScale(priceMax))
+                        .style("stroke", "lightgrey")
+                        .style("stroke-width", "1px");        
+                }
+            
+                for (let j=0; j<= priceMax; j = j + 1000) {
+                    chartArea.append("line")
+                        .attr("x1", xScale(0))
+                        .attr("x2", xScale(priceMax))
+                        .attr("y1", yScale(j))
+                        .attr("y2", yScale(j))
+                        .style("stroke", "lightgrey")
+                        .style("stroke-width", "1px");
+                }
                 
+                // plotting data points
+                data.forEach( ( d, i ) => {
+                    chartArea.append('circle')
+                       .attr('cx', Math.floor(xScale(d['carat'])))
+                       .attr('cy', Math.floor(yScale(d['price'])))
+                       .attr('r', 3)
+                       .attr('opacity', 0.4)
+                       .attr('index', i)
+                       .style('fill', 'darkblue');
+
+                });
 
                 
             });
 
-                // tried doing tick trick but it didn't work
+            // plot for part D
 
-                // let leftGrid = d3.axisLeft(yScale)
-                //                  .tickSize(-chartWidth-10)
-                //                  .tickFormat('');
-                // svg.append('g').attr('class', 'y gridlines')
-                //                .attr('transform', `translate(${margins.left-10}, ${margins.top})`)
-                //                .call(leftGrid);
-                
-                // let bottomGrid = d3.axisBottom(xScale)
-                //                     .tickSize(-chartHeight-10)
-                //                     .tickFormat('');
-                // svg.append('g').attr('class', 'x gridlines')
-                //                .call(bottomGrid);
+            const svg2 = d3.select('svg#svg2');
+            const width2 = svg2.attr('width');
+            const height2 = svg2.attr('height');
+            const margins2 = {top: 5, right: 5, bottom: 0, left: 0};
+            const chartWidth2 = width2 - margins2.right;
+            const chartHeight2 = height2 - margins2.top;
+            const chartArea2 = svg2.append('g')
+                          .attr('transform', `translate(${margins.left}, ${margins.top})`);
+
+            
+            // scales
+            const colorScale = d3.scaleLinear().domain( [0, 8] ).range( [0, chartWidth2]);
+            
 
         </script>
         
     </p>
-    
+
+
 </body>
 
 </html>
