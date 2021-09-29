@@ -216,7 +216,28 @@
         <script>
             d3.csv('../NCAA_shots.csv').then( (data) => {
 
-                console.log(data);
+
+                data.forEach( (d,i) => {
+                    d['x'] = 5* (d['x'])
+                    d['y'] = 5* (d['y'])
+                    d['width'] = 5* (d['width'])
+                    d['height'] = 5* (d['height'])
+                })
+
+                const attemptExtent = d3.extent(data, d => { d['log_attempt'] } );
+                const attemptSeq = d3.scaleSequential(d3.interpolateViridis).domain( [0, attemptExtent[1]]);
+                const svg4 = d3.select('svg#svg4');
+
+                data.forEach( (d,i) => {
+                    svg4.append('rect')
+                        .attr('x', d['x'])
+                        .attr('y', d['y'])
+                        .attr('width', d['width'])
+                        .attr('height', d['height'])
+                        .attr('fill', attemptSeq( d['log_attempt'] ));
+                        console.log( attemptSeq( d['log_attempt'] ) );
+
+                })
 
             });
         </script>
