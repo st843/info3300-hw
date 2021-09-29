@@ -12,6 +12,21 @@
         .gridlines .domain {
                 stroke: none;
             }
+        
+        #partD {
+            margin-top: 20px;
+
+        }
+
+        #partE {
+            margin-top: 20px;
+            margin-bottom: 20px;
+        }
+
+        #svg4 {
+            background-color: black;
+        }
+        
     </style>
 
 </head>
@@ -25,7 +40,12 @@
         </div>
 
         <div id='partD'>
-            <svg id='svg2' height=400 width=400>
+            <svg id='svg2' height='400' width='400'>
+            </svg>
+        </div>
+
+        <div id='partE'>
+            <svg id='svg3' height='400' width='400'>
             </svg>
         </div>
 
@@ -82,27 +102,124 @@
 
                 });
 
+                // plot for part D
+
+                const svg2 = d3.select('svg#svg2');
+                const width2 = svg2.attr('width');
+                const height2 = svg2.attr('height');
+                const margins2 = {top: 5, right: 5, bottom: 0, left: 0};
+                const chartWidth2 = width2 - margins2.right;
+                const chartHeight2 = height2 - margins2.top;
+                const chartArea2 = svg2.append('g')
+                            .attr('transform', `translate(${margins.left}, ${margins.top})`);
+
+                
+                // scales
+                const colorScale = d3.scaleLinear().domain( [0, 8] ).range( [0, chartWidth2]);
+                const priceScale = d3.scaleLinear().domain( [0, priceMax]).range( [ chartHeight2, 0]);
+
+                // gridlines for part D
+                for (let k=0; k<= priceMax; k = k + 1000) {
+                    chartArea2.append("line")
+                        .attr("x1", colorScale(0))
+                        .attr("x2", colorScale(8))
+                        .attr("y1", priceScale(k))
+                        .attr("y2", priceScale(k))
+                        .style("stroke", "lightgrey")
+                          .style("stroke-width", "1px");
+                }
+
+                for (let l=0; l <= 7; l++) {
+                    chartArea2.append("line")
+                        .attr("x1", colorScale(l))
+                        .attr("x2", colorScale(l))
+                        .attr("y1", priceScale(0))
+                        .attr("y2", priceScale(priceMax))
+                        .style("stroke", "lightgrey")
+                        .style("stroke-width", "1px");
+                }
+
+                data.forEach( (d, i) => {
+                    chartArea2.append('circle')
+                        .attr('cx', Math.floor(colorScale(d['color_rating'])  + ( (Math.random()*10 -5 )) ))
+                        .attr('cy', Math.floor(priceScale(d['price'])  + ( (Math.random()*10 -5 )) ))
+                        .attr('r', 3)
+                        .attr('opacity', 0.3)
+                        .attr('index', i)
+                        .style('fill', 'green');
+
+                });
+
+                //part E
+
+                const svg3 = d3.select('svg#svg3');
+
+                // new measure
+                
+                let maxPricePerCarat = d3.max(data, (d) => { return d['price']/d['carat']});
+                
+                // scales
+
+                const yscale2 = d3.scaleLinear().domain( [0, maxPricePerCarat]).range( [ chartHeight2, 0]);
+
+                // gridlines for part E
+                for (let k=0; k<= priceMax; k = k + 1000) {
+                    svg3.append("line")
+                        .attr("x1", colorScale(0))
+                        .attr("x2", colorScale(8))
+                        .attr("y1", yscale2(k))
+                        .attr("y2", yscale2(k))
+                        .style("stroke", "lightgrey")
+                          .style("stroke-width", "1px");
+                }
+
+                for (let l=0; l <= 7; l++) {
+                    svg3.append("line")
+                        .attr("x1", colorScale(l))
+                        .attr("x2", colorScale(l))
+                        .attr("y1", yscale2(0))
+                        .attr("y2", yscale2(maxPricePerCarat))
+                        .style("stroke", "lightgrey")
+                        .style("stroke-width", "1px");
+                }
+
+                data.forEach( (d, i) => {
+                    svg3.append('circle')
+                        .attr('cx', Math.floor(colorScale(d['color_rating'])  + ( (Math.random()*10 -5 )) ))
+                        .attr('cy', Math.floor(yscale2(d['price']/d['carat'])  + ( (Math.random()*10 -5 )) ))
+                        .attr('r', 3)
+                        .attr('opacity', 0.3)
+                        .attr('index', i)
+                        .style('fill', 'darkred');
+
+                });
                 
             });
 
-            // plot for part D
-
-            const svg2 = d3.select('svg#svg2');
-            const width2 = svg2.attr('width');
-            const height2 = svg2.attr('height');
-            const margins2 = {top: 5, right: 5, bottom: 0, left: 0};
-            const chartWidth2 = width2 - margins2.right;
-            const chartHeight2 = height2 - margins2.top;
-            const chartArea2 = svg2.append('g')
-                          .attr('transform', `translate(${margins.left}, ${margins.top})`);
-
             
-            // scales
-            const colorScale = d3.scaleLinear().domain( [0, 8] ).range( [0, chartWidth2]);
-            
-
         </script>
         
+        This view might suggest the relationship that as the quality increases, the price per carat increases. However, this might be misleading because even
+        though it appears that the highest price per carat value is decreasing as quality decreases, these are likely outliers and do not represent the overall trends
+        of the data. Upon closer inspection, it appears that for the color ratings of 3, 4 and 5, there is a greater density of diamonds plotted 
+        more evenly up the y axis, while for the color rating of 1, the values are clustered on the lower end of the axis, and there is a long tail of outliers, likely 
+        for the extremely expensive and high quality diamonds. There also appears to be more values in the mid-range of quality, showing that there is an uneven
+        distribution of values and making it difficult to clearly pinpoint any sound relationships from this graph.
+    </p>
+
+    <p id='p2'>
+        <div id='svgp2'>
+            <svg id='svg4' height='500' width='500'>
+            </svg>
+        </div>
+
+        <script>
+            d3.csv('../NCAA_shots.csv').then( (data) => {
+
+                console.log(data);
+
+            });
+        </script>
     </p>
 
 
