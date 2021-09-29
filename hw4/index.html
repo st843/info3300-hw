@@ -224,8 +224,8 @@
                     d['height'] = 5* (d['height'])
                 })
 
-                const attemptExtent = d3.extent(data, d => { d['log_attempt'] } );
-                const attemptSeq = d3.scaleSequential(d3.interpolateViridis).domain( [0, attemptExtent[1]]);
+                const attemptExtent = d3.extent(data, d =>  d['log_attempt'] );
+                const attemptSeq = d3.scaleSequential(d3.interpolateViridis).domain( attemptExtent);
                 const svg4 = d3.select('svg#svg4');
 
                 data.forEach( (d,i) => {
@@ -235,7 +235,6 @@
                         .attr('width', d['width'])
                         .attr('height', d['height'])
                         .attr('fill', attemptSeq( d['log_attempt'] ));
-                        console.log( attemptSeq( d['log_attempt'] ) );
 
                 })
 
