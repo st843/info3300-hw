@@ -9,7 +9,7 @@
 
     <body>
         <div id='lunch-score'>
-            <svg id='svg1' height='400' width='400'>
+            <svg id='svg1' height='700' width='700'>
             </svg>
         </div>
 
@@ -17,7 +17,7 @@
             const svg = d3.select('svg#svg1');
             const width = svg.attr('width');
             const height = svg.attr('height');
-            const margins = {top: 5, right: 5, bottom: 0, left: 0};
+            const margins = {top: 10, right: 10, bottom: 10, left: 10};
             const chartWidth = width - margins.right;
             const chartHeight = height - margins.top;
             const chartArea = svg.append('g')
@@ -27,17 +27,21 @@
             d3.csv('../Student Performance new.csv').then( (data) => {
                 //scales
                 const scoreExtent = d3.extent(data, d => d['total']);
-                const scoreScale = d3.scaleLinear().domain(scoreExtent).range([ chartHeight, 0]);
-                const educScale = d3.scalePoint()
+                const scoreScale = d3.scaleLinear().domain(scoreExtent).range([ chartHeight-20, 0]);
+                const educScale = d3.scalePoint().domain(["some high school", "high school", "some college", "associate's degree", "bachelor's degree", "master's degree"])
+                                                 .range([0, chartWidth-80]);
                     
                 let leftAxis = d3.axisLeft(scoreScale);
-                console.log(leftAxis);
-                svg.append('g')
+                svg.append("g")
                     .attr('class', 'y axis')
-                    .attr('transform',`translate(${margins.left+10},${margins.top})`) 
+                    .attr('transform',`translate(${margins.left+10},0)`) 
                     .call(leftAxis);
                 
-                let bottomAxis = d3.axisBottom()
+                let bottomAxis = d3.axisBottom(educScale);
+                svg.append("g")
+                    .attr('class', 'x axis')
+                    .attr('transform',`translate(${margins.left+30}, ${chartHeight - 20})` )
+                    .call(bottomAxis);
 
                 data.forEach( (d,i) => {
                     d['total'] = parseFloat(d['math percentage']) + parseFloat(d['reading score percentage']) + parseFloat(d['writing score percentage']);
