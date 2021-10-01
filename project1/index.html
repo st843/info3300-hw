@@ -8,7 +8,16 @@
 
 <body>
     <script>
-        
+        d3.csv('/project1/disney.csv').then( (data) => {
+            
+            data = data.filter( (d) => {return d['Budget'] != "";}  );
+            data = data.filter( (d) => {return d['Box office'] != "";}  );
+            data = data.filter( (d) => {return d['title'] != "";}  );
+            console.log(data);
+            data.forEach( (d,i) => {
+                console.log(d['title']);
+            });
+        });
     </script>
 
 </body>
