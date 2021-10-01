@@ -5,6 +5,12 @@
 
         <script src="https://d3js.org/d3.v7.min.js"></script>
 
+        <style>
+            .bar {
+                fill: blue;
+            }
+        </style>
+
     </head>
 
     <body>
@@ -17,7 +23,7 @@
             const svg = d3.select('svg#svg1');
             const width = svg.attr('width');
             const height = svg.attr('height');
-            const margins = {top: 10, right: 10, bottom: 10, left: 10};
+            const margins = {top: 15, right: 10, bottom: 0, left: 15};
             const chartWidth = width - margins.right;
             const chartHeight = height - margins.top;
             const chartArea = svg.append('g')
@@ -25,11 +31,18 @@
 
         
             d3.csv('../Student Performance new.csv').then( (data) => {
+                data.forEach( (d,i) => {
+                    d['total'] = parseFloat(d['math percentage']) + parseFloat(d['reading score percentage']) + parseFloat(d['writing score percentage']);
+
+                });
                 //scales
                 const scoreExtent = d3.extent(data, d => d['total']);
                 const scoreScale = d3.scaleLinear().domain(scoreExtent).range([ chartHeight-20, 0]);
-                const educScale = d3.scalePoint().domain(["some high school", "high school", "some college", "associate's degree", "bachelor's degree", "master's degree"])
-                                                 .range([0, chartWidth-80]);
+                console.log(scoreExtent);
+                console.log(scoreScale(2));
+                const educScale = d3.scaleBand().domain(["some high school", "high school", "some college", "associate's degree", "bachelor's degree", "master's degree"])
+                                                .range([0, chartWidth-80])
+                                                .padding(0.3);
                     
                 let leftAxis = d3.axisLeft(scoreScale);
                 svg.append("g")
@@ -43,12 +56,18 @@
                     .attr('transform',`translate(${margins.left+30}, ${chartHeight - 20})` )
                     .call(bottomAxis);
 
-                data.forEach( (d,i) => {
-                    d['total'] = parseFloat(d['math percentage']) + parseFloat(d['reading score percentage']) + parseFloat(d['writing score percentage']);
+                
 
-                    
+                svg.selectAll()
+                    .data(data)
+                    .enter()
+                    .append("rect")
+                    .attr("x", d =>  educScale(d['parental level of education']))
+                    .attr("y", d => scoreScale(d['total']))
+                    .attr("width", educScale.bandwidth())
+                    .attr("height", d => chartHeight - scoreScale(d['total']) )
+                    .style('fill', 'blue');
 
-                });
                 
             });
         </script>
