@@ -13,10 +13,18 @@
             data = data.filter( (d) => {return d['Budget'] != "";}  );
             data = data.filter( (d) => {return d['Box office'] != "";}  );
             data = data.filter( (d) => {return d['title'] != "";}  );
+            //console.log(data);
+            // data.forEach( (d,i) => {
+            //     console.log(d['title']);
+            // });
+        });
+
+        d3.csv('/project1/disney_movies_total_gross.csv').then( (data) => {
             console.log(data);
-            data.forEach( (d,i) => {
-                console.log(d['title']);
-            });
+            data = data.filter( (d) => {return d['genre'] != "";}  );
+            console.log(data);
+            data = data.filter( (d) => {return d['total_gross'] != 0;}  );
+            console.log(data);
         });
     </script>
 
