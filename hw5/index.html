@@ -1,0 +1,70 @@
+<html>
+<head>
+    <title> INFO 3300 - HW 4</title>
+    <meta charset="UTF-8" />
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+
+<body>
+
+    <p id='p1'>
+        <div>
+            <svg height='420' width='420' id='svg1'> 
+            </svg>
+        </div>
+        <div>
+            <input type="range" id="colorslider" name="colorslider"
+                    min="0" max="200" step="1" value="100">
+        </div>
+        <script>
+            let ab = [];
+            for (let a = -160; a <= 160; a = a + 16) {
+                for (let b = -160; b <= 160; b = b + 16) {
+                    var ABob = {
+                        a: a,
+                        b: b
+                    };
+
+                    ab.push(ABob);
+
+                }
+            }
+
+            const svg = d3.select("svg#svg1");
+  
+            const width = svg.attr("width");
+            const height = svg.attr("height");
+            const margin = {top: 10, right: 10, bottom: 10, left: 10};
+            
+            const chartWidth = width - margin.left - margin.right;
+            const chartHeight = height - margin.top - margin.bottom;
+
+            const aScale = d3.scaleLinear().domain([-160, 160]).range([10, 410]);
+            const bScale = d3.scaleLinear().domain([-160, 160]).range([410, 10]);
+
+            function showCircles(luminosity) {
+                svg.selectAll('circle')
+                    .data(ab)
+                    .join('circle')
+                    .attr('r', 10)
+                    .attr('cx', d => aScale(d.a))
+                    .attr('cy', d => bScale(d.b))
+                    .attr('fill', d => d3.lab(luminosity, d.a, d.b));
+                    d3.select('div input').on('input', function() { console.log(this.value) });
+
+            }
+            showCircles(80);
+            
+
+
+        </script>
+        
+
+    </p>
+
+
+</body>
+
+
+
+</html>
