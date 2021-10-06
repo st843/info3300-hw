@@ -3,15 +3,30 @@
     <title> INFO 3300 - HW 4</title>
     <meta charset="UTF-8" />
     <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <style>
+        .gridlines line {
+        stroke: #bbb;
+        }
+        
+        .gridlines .domain {
+        stroke: none;
+        }
+
+        #number1 {
+            margin-top: 10px;
+        }
+    </style>
 </head>
 
 <body>
 
     <p id='p1'>
-        
-        <svg height='420' width='420' id='svg1'> 
-        </svg>
-        
+        <div id='number1'>
+            <svg height='420' width='420' id='svg1'> 
+            </svg>
+        </div>
+
         <div>
             <input type="range" id="colorslider" name="colorslider"
                     min="0" max="200" step="1" value="100">
@@ -31,13 +46,6 @@
             }
 
             const svg = d3.select("svg#svg1");
-  
-            const width = svg.attr("width");
-            const height = svg.attr("height");
-            const margin = {top: 10, right: 10, bottom: 10, left: 10};
-            
-            const chartWidth = width - margin.left - margin.right;
-            const chartHeight = height - margin.top - margin.bottom;
 
             const aScale = d3.scaleLinear().domain([-160, 160]).range([10, 410]);
             const bScale = d3.scaleLinear().domain([-160, 160]).range([410, 10]);
@@ -62,6 +70,110 @@
         </script>
         
 
+    </p>
+
+    <p id="p2">
+        <div id='number2'>
+            <svg id="svg2" width="800" height="500">
+            </svg>
+        </div>
+
+        <script>
+
+            // set up svg
+            const svg2 = d3.select('svg#svg2')
+
+            
+            const width = svg2.attr("width");
+            const height = svg2.attr("height");
+            const margin = {top: 10, right: 10, bottom: 50, left: 50};
+
+            const chartWidth = width - margin.left - margin.right;
+            const chartHeight = height - margin.top - margin.bottom;
+
+            let labels = svg2.append('g').attr('id', 'labels');
+            let chartArea = svg2.append("g").attr("id","points")
+                                .attr("transform","translate("+margin.left+","+margin.top+")");
+
+
+            // jitter function
+            function jitter () {
+                return Math.floor(Math.random() * (5 - (-4)) + (-4)) ;
+            }
+            // filtering and cleaning data
+            d3.json('../wines.json').then( (data) => {
+                data = data.filter( (d) => {return d['region_1'] != 'NA' && d['region_1'] != "N/A" && d['courtry'] != "N/A" && d['country'] != 'NA';}  );
+
+                data.forEach( (d, i) => {
+                    d['price'] = Number ( d['price'].replace(/\$/g,""));
+                    d['points'] = Number ( d['points']);
+                })
+                console.log(data.length);
+
+
+                
+
+                // extents and scales
+                const priceExtent = d3.extent(data, d => d['price']);
+                console.log(priceExtent);
+                const priceScale = d3.scaleLinear().domain(priceExtent).range([0, chartWidth]);
+
+                const pointsExtent = d3.extent(data, d => d['points']);
+                console.log(pointsExtent);
+                const pointsScale = d3.scaleLinear().domain(pointsExtent).range([chartHeight, 0]);
+
+                // axes + gridlines
+                let leftAxis = d3.axisLeft(pointsScale).tickFormat("");
+                let leftGridlines = d3.axisLeft(pointsScale)
+                                      .tickSize(-chartWidth-10)
+                                      .tickFormat(d3.format("~f"));
+                
+                labels.append("g")
+                           .attr("class", "y axis")
+                           .attr("transform","translate("+(margin.left)+","+margin.top+")")
+                           .call(leftAxis)
+                labels.append("g")
+                           .attr("class", "y gridlines")
+                           .attr("transform","translate("+(margin.left-10)+","+margin.top+")")
+                           .call(leftGridlines);
+  
+
+                let bottomAxis = d3.axisBottom(priceScale).tickFormat("");
+                let bottomGridlines = d3.axisBottom(priceScale).tickSize(-chartHeight-10)
+                                        .tickFormat(d3.format("~f"));
+                labels.append("g")
+                      .attr("class", "x axis")
+                      .attr("transform","translate("+margin.left+","+(chartHeight+margin.top)+")")
+                      .call(bottomAxis);
+                labels.append("g")
+                      .attr("class", "x gridlines")
+                      .attr("transform","translate("+margin.left+","+(chartHeight+margin.top+10)+")")
+                      .call(bottomGridlines);
+            
+                // adding cicles for data points
+                let circles = chartArea.selectAll("circle").data(data)
+                                        .join("circle")
+                                        .attr('cx', d => priceScale(d['price']))
+                                        .attr('cy', d=> pointsScale(d['points']) )
+                                        .attr('r', 4)
+                                        .style('fill', 'black');
+
+            })
+
+            
+            
+
+            
+        </script>
+
+        To look for bad values, I looked through the data to see if there were any missing values, and found that some regions or countries had 
+        "NA" or "N/A" as values, so I used data.filter to only return the dataset if region_1 or country does not have these missing values. I then saw 
+        that both prices and points were included as strings and not numbers, so I used type coercion with Number() to change these values to a number. 
+        The prices also had a dollar sign, so I replaced the dollar sign with the empty string so the type coercion would not break. At the end, I was left
+        with 845 remaining data points. 
+
+        To set up the axes and gridlines, I used the linear scales I created for "points" and "price" so that there would be an even distribution
+        of values along each axis. 
     </p>
 
 
