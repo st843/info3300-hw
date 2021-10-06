@@ -20,6 +20,7 @@
 </head>
 
 <body>
+    <h3>Srishti Tyagi st843</h3>
 
     <p id='p1'>
         <div id='number1'>
@@ -86,7 +87,8 @@
             
             const width = svg2.attr("width");
             const height = svg2.attr("height");
-            const margin = {top: 10, right: 10, bottom: 50, left: 50};
+            const margin = {top: 10, right: 30, bottom: 40, left: 30};
+            
 
             const chartWidth = width - margin.left - margin.right;
             const chartHeight = height - margin.top - margin.bottom;
@@ -98,7 +100,7 @@
 
             // jitter function
             function jitter () {
-                return Math.floor(Math.random() * (5 - (-4)) + (-4)) ;
+                return Math.floor(Math.random() * (8) + (-4)) ;
             }
             // filtering and cleaning data
             d3.json('../wines.json').then( (data) => {
@@ -109,6 +111,7 @@
                     d['points'] = Number ( d['points']);
                 })
                 console.log(data.length);
+                console.log(data);
 
 
                 
@@ -116,11 +119,11 @@
                 // extents and scales
                 const priceExtent = d3.extent(data, d => d['price']);
                 console.log(priceExtent);
-                const priceScale = d3.scaleLinear().domain(priceExtent).range([0, chartWidth]);
+                const priceScale = d3.scaleLog().domain(priceExtent).range([margin.left, chartWidth]);
 
                 const pointsExtent = d3.extent(data, d => d['points']);
                 console.log(pointsExtent);
-                const pointsScale = d3.scaleLinear().domain(pointsExtent).range([chartHeight, 0]);
+                const pointsScale = d3.scaleLinear().domain(pointsExtent).range([chartHeight, margin.right]);
 
                 // axes + gridlines
                 let leftAxis = d3.axisLeft(pointsScale).tickFormat("");
@@ -140,7 +143,7 @@
 
                 let bottomAxis = d3.axisBottom(priceScale).tickFormat("");
                 let bottomGridlines = d3.axisBottom(priceScale).tickSize(-chartHeight-10)
-                                        .tickFormat(d3.format("~f"));
+                                        .tickFormat(d3.format("$~f"));
                 labels.append("g")
                       .attr("class", "x axis")
                       .attr("transform","translate("+margin.left+","+(chartHeight+margin.top)+")")
@@ -149,16 +152,19 @@
                       .attr("class", "x gridlines")
                       .attr("transform","translate("+margin.left+","+(chartHeight+margin.top+10)+")")
                       .call(bottomGridlines);
-            
+                
+                const stateScale = d3.scaleOrdinal(d3.schemeCategory10);
+                
                 // adding cicles for data points
                 let circles = chartArea.selectAll("circle").data(data)
                                         .join("circle")
-                                        .attr('cx', d => priceScale(d['price']))
-                                        .attr('cy', d=> pointsScale(d['points']) )
+                                        .attr('cx', d => priceScale(d['price']) + jitter())
+                                        .attr('cy', d=> pointsScale(d['points']) + jitter())
                                         .attr('r', 4)
-                                        .style('fill', 'black');
+                                        .style('fill', d => stateScale(d['state']))
+                                        .attr('opacity', 0.7)
 
-            })
+            });
 
             
             
@@ -166,14 +172,29 @@
             
         </script>
 
-        To look for bad values, I looked through the data to see if there were any missing values, and found that some regions or countries had 
-        "NA" or "N/A" as values, so I used data.filter to only return the dataset if region_1 or country does not have these missing values. I then saw 
-        that both prices and points were included as strings and not numbers, so I used type coercion with Number() to change these values to a number. 
-        The prices also had a dollar sign, so I replaced the dollar sign with the empty string so the type coercion would not break. At the end, I was left
-        with 845 remaining data points. 
+        <p>
+            <b>A.</b> To look for bad values, I looked through the data to see if there were any missing values, and found that some regions or countries had 
+            "NA" or "N/A" as values, so I used data.filter to only return the dataset if region_1 or country does not have these missing values. I then saw 
+            that both prices and points were included as strings and not numbers, so I used type coercion with Number() to change these values to a number. 
+            The prices also had a dollar sign, so I replaced the dollar sign with the empty string so the type coercion would not break. At the end, I was left
+            with 845 remaining data points. 
+        </p>
 
-        To set up the axes and gridlines, I used the linear scales I created for "points" and "price" so that there would be an even distribution
-        of values along each axis. 
+        <p>
+            <b>B.</b> To set up the axes and gridlines, I used a log scale for price because there were a lot of values clustered together toward the lower end of the X axis. Using a logarithmic
+            instead of a linear scale allows for greater separation between data points to make them more distinuishable by price. Although 
+            a log scale might be less intuitive to use, it is worth the tradeoff for being able to distinguish more values. I used a linear scale
+            for points because there was already an even distribution of y-values in the data, so additional adjustment of the scale
+            was not needed to have good visual separation. I translated the x axis by the left margin to allow for more space on the left
+            to allow for points to not be directly on top of the y axis. I made the gridlines a light gray color so they would be
+            visible but not overpower the circles for the plotted data. To format the tick labels, I used plain numbers for the y axis 
+            to represent the points, and I formatted the x axis labels to have a dollar sign in front to signify price dollar amounts.
+        </p>
+
+        <p>
+            <b>C.</b> To design the circle elements, I used 
+        </p>
+
     </p>
 
 
