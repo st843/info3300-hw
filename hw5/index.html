@@ -8,10 +8,10 @@
 <body>
 
     <p id='p1'>
-        <div>
-            <svg height='420' width='420' id='svg1'> 
-            </svg>
-        </div>
+        
+        <svg height='420' width='420' id='svg1'> 
+        </svg>
+        
         <div>
             <input type="range" id="colorslider" name="colorslider"
                     min="0" max="200" step="1" value="100">
@@ -50,9 +50,11 @@
                     .attr('cx', d => aScale(d.a))
                     .attr('cy', d => bScale(d.b))
                     .attr('fill', d => d3.lab(luminosity, d.a, d.b));
-                    d3.select('div input').on('input', function() { console.log(this.value) });
+                    
+                
 
             }
+            d3.select('div input').on('input', function() { showCircles(this.value) });
             showCircles(80);
             
 
