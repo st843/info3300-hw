@@ -16,6 +16,14 @@
         #number1 {
             margin-top: 10px;
         }
+
+        span {
+            margin-right: 10px;
+        }
+
+        span#clear {
+            margin-top: 50px;
+        }
     </style>
 </head>
 
@@ -76,14 +84,15 @@
     <p id="p2">
         <div id='number2'>
             <svg id="svg2" width="800" height="500">
-                <text id="name" x="65" y="10"  text-anchor="start" alignment-baseline="hanging"></text>
+                <text id="name" x="65" y="10"  text-anchor="start" alignment-baseline="hanging">
             </svg>
         </div>
 
         <!-- legend labels -->
-        <div>
-            
+        <div id="legend">
+
         </div>
+        <span id="clear">Clear</span>
 
         <script>
 
@@ -197,6 +206,28 @@
                       .transition().duration(200)
                       .text("");
 
+                });
+
+                stateScale.domain().forEach ( (d,i) => {
+
+                    d3.select("#legend")
+                      .append("span")
+                      .style("color", stateScale(d))
+                      .text(d)
+                    
+                        .on("mouseover", function () {
+                            d3.selectAll("#svg2 circle").each( function () {
+                                let val = d3.select(this);
+                             
+                                if (val.attr('state') === d) {
+                                    val.attr("opacity", "1");
+                                }
+                                else {
+                                    val.attr("opacity", "0.3");
+                                }
+                            })
+                        })
+                    
                 });
 
                 
