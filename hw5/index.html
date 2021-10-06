@@ -76,7 +76,13 @@
     <p id="p2">
         <div id='number2'>
             <svg id="svg2" width="800" height="500">
+                <text id="name" x="65" y="10"  text-anchor="start" alignment-baseline="hanging"></text>
             </svg>
+        </div>
+
+        <!-- legend labels -->
+        <div>
+            
         </div>
 
         <script>
@@ -162,7 +168,38 @@
                                         .attr('cy', d=> pointsScale(d['points']) + jitter())
                                         .attr('r', 4)
                                         .style('fill', d => stateScale(d['state']))
-                                        .attr('opacity', 0.7)
+                                        .attr('opacity', 0.7);
+
+                circles.on("mouseover", function () {
+                    d3.select(this)
+                      .transition().duration(200)
+                      .attr("stroke-width", 2.5)
+                      .attr("stroke", "black")
+                      .attr('opacity', 1)
+                      .attr('r', 7);
+                   
+                    let wine = d3.select(this).datum()['title']
+                    d3.select("#name")
+                      .transition().duration(200)
+                      .text(wine);
+
+                });
+                
+
+                circles.on("mouseout", function () {
+                    d3.select(this)
+                      .transition().duration(200)
+                      .attr("stroke-width", 0)
+                      .attr('opacity', 0.7)
+                      .attr("r", 4);
+                    
+                    d3.select("#name")
+                      .transition().duration(200)
+                      .text("");
+
+                });
+
+                
 
             });
 
@@ -192,7 +229,22 @@
         </p>
 
         <p>
-            <b>C.</b> To design the circle elements, I used 
+            <b>C.</b> To design the circle elements, I created an ordinal scale with the Category 10 color scheme, as these
+            colors were very distinguishable and clear for a discrete color scale with 4 different colors. I made the circles to have
+            a radius for 4 so they were visible enough, even if there was a small tradeoff for pinpointing accuracy visually. I also added
+            an opacity of 0.7 so that areas of clustering would still have some distinguishable data values. One advantage of the jittering technique index 
+            is that it makes individual data points more distinguishable, especially if they have very close or the same values for "price" and "points".
+            One disadvantage is that it reduces the accuracy of judging which value each circle has, since each circle may be offset by up to 4 pixels, while
+            also increasing the visual clutter by not having the circles placed on cleaner lines.
+        </p>
+
+        <p>
+            <b>D.</b>The benefits of using mouseovers for the user is that users are able to see more information on the wine titles without
+            having too much visual clutter. Without the mouseovers, the only options are to not have the wines' titles at all, or to include them statically, 
+            which would cause issues for being able to see prices and points for each circle. However, there are issues with using this mouseover
+            in areas of high density, such as clustered values in the $15 to $25 region, especially where all circles are of the same color. It might
+            be difficult for users to select one specific circle out of that cluster, even with the slight help of the jitter. If I were to fix this, it 
+            might be helpful to allow users to zoom into certain areas where they can increase the scattering of the circles so they can be more easily discerned.
         </p>
 
     </p>
