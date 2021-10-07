@@ -177,7 +177,8 @@
                                         .attr('cy', d=> pointsScale(d['points']) + jitter())
                                         .attr('r', 4)
                                         .style('fill', d => stateScale(d['state']))
-                                        .attr('opacity', 0.7);
+                                        .attr('opacity', 0.7)
+                                        .attr('state', d=> d['state']);
 
                 circles.on("mouseover", function () {
                     d3.select(this)
@@ -208,27 +209,37 @@
 
                 });
 
-                stateScale.domain().forEach ( (d,i) => {
+                stateScale.domain().forEach( function (d,i) {
 
                     d3.select("#legend")
                       .append("span")
-                      .style("color", stateScale(d))
                       .text(d)
+                      .style("color", stateScale(d))
+                      
                     
                         .on("mouseover", function () {
-                            d3.selectAll("#svg2 circle").each( function () {
+                            d3.selectAll("#svg2 circle").each(function () {
                                 let val = d3.select(this);
-                             
-                                if (val.attr('state') === d) {
-                                    val.attr("opacity", "1");
+                            
+                                if (val.attr("state")== d) {
+                                    console.log(val.attr('state'))
+                                    val.attr("opacity", "1")
                                 }
                                 else {
-                                    val.attr("opacity", "0.3");
+                                    val.attr("opacity", "0.1");
                                 }
                             })
                         })
                     
+                    
                 });
+
+                let clear = d3.select("#clear")
+                clear.on("mouseover", function() {
+                    d3.selectAll("#svg2 circle")
+                       .attr("opacity", 0.7);
+                })
+
 
                 
 
@@ -260,7 +271,7 @@
         </p>
 
         <p>
-            <b>C.</b> To design the circle elements, I created an ordinal scale with the Category 10 color scheme, as these
+            <b>C.</b> To design the circle vals, I created an ordinal scale with the Category 10 color scheme, as these
             colors were very distinguishable and clear for a discrete color scale with 4 different colors. I made the circles to have
             a radius for 4 so they were visible enough, even if there was a small tradeoff for pinpointing accuracy visually. I also added
             an opacity of 0.7 so that areas of clustering would still have some distinguishable data values. One advantage of the jittering technique index 
@@ -276,6 +287,11 @@
             in areas of high density, such as clustered values in the $15 to $25 region, especially where all circles are of the same color. It might
             be difficult for users to select one specific circle out of that cluster, even with the slight help of the jitter. If I were to fix this, it 
             might be helpful to allow users to zoom into certain areas where they can increase the scattering of the circles so they can be more easily discerned.
+        </p>
+
+        <p>
+            <b>E.</b>One issue with the mouseover filter by state feature is that labels can still be seen if you mouseover a non-filtered value,
+            and mousing out results in that circle going back to original opacity even if it was filtered out originally.
         </p>
 
     </p>
