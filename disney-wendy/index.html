@@ -1,0 +1,196 @@
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>INFO 3300 Project 1</title>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+
+<body>
+    <p id="graph2">
+        <div>
+            <svg id="canvaTwo" height=680 width=1000 style="margin: 15px; border: 1px solid black;"></svg>
+        </div>
+        <script>
+                let canvaTwo = d3.select("svg#canvaTwo");
+                const width = canvaTwo.attr("width");
+                const height = canvaTwo.attr("height");
+
+                const margin = {top: 70, right: 190, bottom: 40, left: 190};
+                const chartWidth = width - margin.left - margin.right;
+                const chartHeight = height - margin.top - margin.bottom;
+                let chartArea = canvaTwo.append("g").attr("id","chartArea")
+                                        .attr("transform",`translate(${margin.left},${margin.top})`);
+                let graphing = canvaTwo.append("g").attr("id", "graphing");
+
+
+            d3.csv('../disney_movies_total_gross.csv').then( (data) => {                
+                // data cleaning
+                data = data.filter( (d) => {return d['genre'] != "" && d['total_gross'] > 0;}  );
+
+                data.forEach( (d, i) => {
+                    d['total_gross'] = Number(d["total_gross"] / 1000000);
+                })
+                
+                // create an array of object [{genre: total_gross}]
+                let genre = [];
+                data.forEach ( (d, i) => {
+                    let total = 0;
+                    data.forEach( (f, i) => {
+                        if(d['genre'] == f['genre']) {
+                            total = total + f['total_gross'];
+                        }
+                    })
+                    genre.push({"name": d['genre'], "total": total.toFixed(2)})
+                });
+
+                function unique(genre, prop) {
+                    var uniqueArray = [];
+                    var check  = {};
+                    for(var i in genre) {
+                        check[genre[i][prop]] = genre[i];
+                    }
+                    for(i in check) {
+                        uniqueArray.push(check[i]);
+                    }
+                    return uniqueArray;
+                }
+                var uniqueGenre = unique(genre, "name");
+                console.log(uniqueGenre); 
+
+                let max = 0;
+                for(let i = 0; i < uniqueGenre.length; i++) {
+                    let check = uniqueGenre[i].total;
+                    max = Math.max(uniqueGenre[i].total, max)
+                }            
+                
+                // title of the graph
+                canvaTwo.append("text")
+                            .attr("text-anchor", "middle")
+                            .attr("dominant-baseline", "hanging")
+                            .attr("font-size", "20px")
+                            .attr("x", width / 2)
+                            .attr('y', 25)
+                            .attr("font-family", "Avenir")
+                            .text("Genre vs. total gross income");
+
+                const grossIncomeScale = d3.scaleLinear().domain([0, max]).range([0, chartWidth]);
+
+                let color = ["#31709B", "#9BC7D2", "#B591F3", "#EFA23D", "#FBD26E", "#FCE7AB", 
+                            "#AC5D9E", "#D282B4", "#F5A7A8", "#569B7E", "#77C8A6", "#E2BB9D"];
+                            
+                // draw the bars
+                let position = 0; 
+                uniqueGenre.forEach( (d, i) => {
+                    
+
+                    chartArea.append('rect')
+                            .attr('x', 10)
+                            .attr('y', position)
+                            .attr('width', chartWidth)
+                            .attr('height', 26)
+                            .attr('stroke', "")
+                            .attr('fill', '#ececec');
+                    chartArea.append('circle')
+                            .attr('cx', chartWidth + 10)
+                            .attr('cy', position + 13)
+                            .attr('r', 13)
+                            .style('fill', '#ececec');
+                  
+                    chartArea.append('rect')
+                            .attr('x', 10)
+                            .attr('y', position)
+                            .attr('width', grossIncomeScale(d['total']))
+                            .attr('height', 26)
+                            .attr('stroke', "")
+                            .attr('fill', color[i]);
+                    chartArea.append('circle')
+                            .attr('cx', grossIncomeScale(d['total']) + 10)
+                            .attr('cy', position + 13)
+                            .attr('r', 13)
+                            .style('fill', color[i]);
+
+                    position += 50;
+                })
+                
+                // draw the rect to cover the extra part of circles
+                canvaTwo.append('rect')
+                            .attr('x', 0)
+                            .attr('y', 0)
+                            .attr('width', margin.left + 10)
+                            .attr('height', height)
+                            .attr('stroke', "")
+                            .attr('fill', 'white');
+                
+                // draw the y axis
+                canvaTwo.append("line")
+                    .attr("x1", margin.left + 10)
+                    .attr("x2", margin.left + 10)
+                    .attr("y1", margin.top)
+                    .attr("y2", position + 50)
+                    .style("stroke", "#D3D3D3")
+                    .style("stroke-width", 3);
+
+                let textPosition = margin.top;
+                uniqueGenre.forEach( (d, i) => {
+                    canvaTwo.append("text")
+                            .attr("text-anchor", "end")
+                            .attr("dominant-baseline", "middle")
+                            .attr("font-size", "15px")
+                            .attr("x", margin.left)
+                            .attr('y', textPosition + 13)
+                            .attr("font-family", "Avenir")
+                            .text(uniqueGenre[i].name);
+                    textPosition += 50;
+                });
+
+                
+                
+
+
+
+
+
+
+
+
+                
+        });
+        </script>
+    </p>
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <!-- <script>
+        d3.csv('/project1/disney.csv').then( (data) => {
+            
+            data = data.filter( (d) => {return d['Budget'] != "";}  );
+            data = data.filter( (d) => {return d['Box office'] != "";}  );
+            data = data.filter( (d) => {return d['title'] != "";}  );
+            //console.log(data);
+            // data.forEach( (d,i) => {
+            //     console.log(d['title']);
+            // });
+        });
+
+        d3.csv('/project1/disney_movies_total_gross.csv').then( (data) => {
+            console.log(data);
+            data = data.filter( (d) => {return d['genre'] != "";}  );
+            console.log(data);
+            data = data.filter( (d) => {return d['total_gross'] != 0;}  );
+            console.log(data);
+        });
+    </script> -->
+
+</body>
+</html>
