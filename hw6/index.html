@@ -1,0 +1,110 @@
+<html>
+<head>
+    <title> INFO 3300 - HW 4</title>
+    <meta charset="UTF-8" />
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <style>
+        .gridlines line {
+            stroke: lightgray;
+        }
+        
+        .gridlines .domain {
+        stroke: none;
+        }
+    </style>
+</head>
+
+<body>
+    <p id="p1">
+        <svg height="400" width="800" id="svg1"> 
+        </svg>
+
+        <script>
+
+            // setting up svg
+            const svg1= d3.select('svg#svg1')
+
+            const width = svg1.attr("width");
+            const height = svg1.attr("height");
+            const margin = {top: 10, right: 30, bottom: 40, left: 30};
+
+
+            const chartWidth = width - margin.left - margin.right;
+            const chartHeight = height - margin.top - margin.bottom;
+
+            let labels = svg1.append('g').attr('id', 'labels');
+            let chartArea = svg1.append("g").attr("id","points")
+                                .attr("transform","translate("+margin.left+","+margin.top+")");
+
+            // async function                    
+            const datarequest = async function() {
+                const mario = await d3.json("./mariokart_records.json");
+                console.log(mario);
+
+
+                // setting up scales
+                const timeValue = d3.timeParse("%Y-%m-%d");
+                const minDate = timeValue(mario['earliest_date']);
+                const maxDate = timeValue(mario['latest_date']);
+
+                const timeScale = d3.scaleTime().domain([minDate, maxDate]).range([margin.left, chartWidth]);
+                const valueScale = d3.scaleLinear().domain([mario.min_value, mario.max_value]).range([chartHeight, margin.bottom]);
+
+                const trackColor = d3.scaleOrdinal(d3.schemeCategory10);
+
+
+                //setting up axes
+                let leftAxis = d3.axisLeft(valueScale);
+                let leftGridlines = d3.axisLeft(valueScale)
+                                      .tickSize(-chartWidth-5)
+                                      .tickFormat("");
+                
+                labels.append("g")
+                           .attr("class", "y axis")
+                           .attr("transform","translate("+(margin.left)+","+margin.top+")")
+                           .call(leftAxis)
+                labels.append("g")
+                           .attr("class", "y gridlines")
+                           .attr("transform","translate("+(margin.left-5)+","+margin.top+")")
+                           .call(leftGridlines);
+  
+
+                let bottomAxis = d3.axisBottom(timeScale);
+                let bottomGridlines = d3.axisBottom(timeScale).tickSize(-chartHeight+35)
+                                        .tickFormat("");
+           
+                labels.append("g")
+                      .attr("class", "x gridlines")
+                      .attr("transform","translate("+margin.left+","+(chartHeight+margin.top+5)+")")
+                      .call(bottomGridlines);
+                labels.append("g")
+                      .attr("class", "x axis")
+                      .attr("transform","translate("+margin.left+","+(chartHeight+margin.top)+")")
+                      .call(bottomAxis);
+
+
+                var lineGen = d3.line()
+                  .x( d => timeScale(d['date']) )
+                  .y( d => valueScale(d['record_time']) );
+
+                let tags = chartArea.selectAll("g.track").data(mario.timeseries)
+                         .join("g")
+                         .attr("class", "line")
+                        //  .attr("track", d => d.track)
+                         .style("stroke", d => trackColor(d.track));
+
+
+            }
+
+            //END of datarequest
+            datarequest();
+
+
+        </script>
+    </p>
+</body>
+
+
+
+</html>

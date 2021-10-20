@@ -21,7 +21,7 @@
         .tick {
             color:rgb(63, 63, 63) ;
             font-family: avenir;
-            font-size: 10px;
+            font-size: 13px;
         }
 
         .axis {
@@ -35,11 +35,8 @@
 
         text.chart-title {
             color: rgb(63, 63, 63);
-            font-size: 30px;
-            font-family: avenir;
-
-            /* font-weight: bold; */
-            
+            font-size: 22px;
+            font-weight: bold;
         }
 
         text.axis-label{
@@ -72,7 +69,7 @@
 
     <!-- for graph 2 -->
     <div>
-        <svg id="canvaTwo" height=1000 width=1200 style="margin: 15px;"></svg>
+        <svg id="canvaTwo" height=1000 width=1200 style="margin: 15px; border: 1px solid black;"></svg>
     </div>
 
     <script>
@@ -98,7 +95,7 @@
         const widthTwo = canvaTwo.attr("width");
         const heightTwo = canvaTwo.attr("height");
 
-        const marginTwo = {top: 160, right: 40, bottom: 40, left: 190};
+        const marginTwo = {top: 70, right: 190, bottom: 40, left: 190};
         const chartWidthTwo = widthTwo - marginTwo.left - marginTwo.right;
         const chartHeightTwo = heightTwo - marginTwo.top - marginTwo.bottom;
         let chartAreaTwo = canvaTwo.append("g").attr("id","chartArea")
@@ -109,7 +106,7 @@
         const monthsDict = {1: 'Jan', 2: 'Feb', 3: 'Mar', 4: 'Apr', 5: 'May', 6: 'Jun', 7: 'Jul', 8: 'Aug', 9: 'Sep', 10: 'Oct', 11: 'Nov', 12: 'Dec'};
 
         let genres = {};
-        d3.csv('../project1/disney_movies_total_gross.csv').then( (genreData) => {
+        d3.csv('../Disney/disney_movies_total_gross.csv').then( (genreData) => {
             console.log(genreData);
             // removing empty values for the genre/total gross income data set
             genreData = genreData.filter( (d) => {return d['genre'] != "";}  );
@@ -143,7 +140,7 @@
 
         // promise for second data set, which has box office profits data, release dates and movie titles
 
-        d3.csv('../project1/disney_movie.csv').then( (data) => {
+        d3.csv('../Disney/disney.csv').then( (data) => {
             console.log(data);
 
             // removing empty values for the box office/budget data set 
@@ -169,8 +166,8 @@
             // coercing the box office values to numbers, split the string of release dates to get the month as a number
             data.forEach( (d, i) => {
                 d['Box'] = Number( d['Box office (float)']);
-                d['Release date (datetime)'] = d['Release date (datetime)'].split("-");
-                d['monthNum'] = Number(d['Release date (datetime)'][1]);
+                d['Release date (datetime)'] = d['Release date (datetime)'].split("/");
+                d['monthNum'] = Number(d['Release date (datetime)'][0]);
                 d['month'] = monthsDict[d['monthNum']];
                 d['budget'] = Number(d['Budget (float)']);
             })
@@ -319,28 +316,18 @@
         
             // graph 2
                 
-                data.forEach( (d, i) => {
-                    // d['total_gross'] = Number(d["total_gross"] / 1000000);
-                    // d['Box'] = d['Box'] / 1000000;
-                })
-
+                
                 
                 // create an array of object [{genre: total_gross}]
                 let genreTwo = [];
                 data.forEach ( (d, i) => {
                     let total = 0;
-                    let budget = 0;
                     data.forEach( (f, i) => {
                         if(d['genre'] == f['genre']) {
                             total = total + f['total_gross'];
-                            budget = budget + f['budget'];
                         }
                     })
-                    let incomeLabel = Math.floor(total / 1000000);
-                    let budgetLabel = Math.floor(budget / 1000000);
-                    let profit = Math.floor( (total - budget) / 1000000);
-                    genreTwo.push({"name": d['genre'], "total": total, "budget": budget,
-                    "incomeLabel": incomeLabel, "budgetLabel": budgetLabel, "profit": profit})
+                    genreTwo.push({"name": d['genre'], "total": total, "budget": d['budget']})
                 });
                 console.log(genreTwo);
 
@@ -356,7 +343,6 @@
                     return uniqueArray;
                 }
                 var uniqueGenre = unique(genreTwo, "name");
-                // uniqueGenre.sort( (d) => d3.descending(d.profit) );
                 console.log(uniqueGenre); 
 
                 let max = 0;
@@ -376,25 +362,17 @@
                 canvaTwo.append("text")
                             .attr("text-anchor", "middle")
                             .attr("dominant-baseline", "hanging")
-                            .attr("font-size", "30px")
+                            .attr("font-size", "20px")
                             .attr("x", widthTwo / 2)
                             .attr('y', 25)
                             .attr("font-family", "Avenir")
-                            .text("Genre vs. Total Gross Income & Budget");
-                // canvaTwo.append('rect')
-                //             .attr('x', 0)
-                //             .attr('y', 0)
-                //             .attr('width', 1200)
-                //             .attr('height', 80)
-                //             .attr('stroke', "")
-                //             .style('opacity', 0.2)
-                //             .attr('fill', '#144CAB');
+                            .text("Genre vs. total gross income");
 
-                const moneyScale = d3.scaleLog().domain([1, max]).range([0, chartWidthTwo]);
+                const grossIncomeScale = d3.scaleLog().domain([1, max]).range([0, chartWidthTwo]);
                 // const budgetScale = d3.scaleLog().domain([0, maxBudget]).range([0, chartWidthTwo]);
 
-                let color = ["#31709B", "#EFA23D", "#569B7E", "#B591F3", "#FFDE81", "#D0BAA0", 
-                            "#F5A7A8", "#9AE2C4", "#AC5D91", "#B1E3F0"];
+                let color = ["#31709B", "#9BC7D2", "#B591F3", "#EFA23D", "#FBD26E", "#FCE7AB", 
+                            "#AC5D9E", "#D282B4", "#F5A7A8", "#569B7E", "#77C8A6", "#E2BB9D"];
                             
                 // draw the bars
                 let position = 0; 
@@ -403,46 +381,32 @@
 
                     chartAreaTwo.append('rect')
                             .attr('x', 10)
-                            .attr('y', position + 24)
-                            .attr('width', moneyScale(d['budget']))
-                            .attr('height', 24)
+                            .attr('y', position + 20)
+                            .attr('width', grossIncomeScale(d['budget']))
+                            .attr('height', 32)
                             .attr('stroke', "")
                             .attr('fill', '#ececec');
                     chartAreaTwo.append('circle')
-                            .attr('cx', moneyScale(d['budget']) + 10)
+                            .attr('cx', grossIncomeScale(d['budget']) + 10)
                             .attr('cy', position + 36)
-                            .attr('r', 12)
+                            .attr('r', 16)
                             .style('fill', '#ececec');
-                    chartAreaTwo.append("text")
-                            .attr("text-anchor", "middle")
-                            .attr("dominant-baseline", "middle")
-                            .attr("font-size", "10px")
-                            .attr("x", moneyScale(d['budget']))
-                            .attr('y', position + 36)
-                            .attr("font-family", "Avenir")
-                            .text(uniqueGenre[i].budgetLabel + "M");
                   
                     chartAreaTwo.append('rect')
                             .attr('x', 10)
                             .attr('y', position)
-                            .attr('width', moneyScale(d['total']))
-                            .attr('height', 24)
+                            .attr('width', grossIncomeScale(d['total']))
+                            .attr('height', 32)
                             .attr('stroke', "")
-                            .attr('fill', color[i]);
+                            .attr('fill', color[i])
+                            .style("opacity", 0.8);
+
                     chartAreaTwo.append('circle')
-                            .attr('cx', moneyScale(d['total']) + 10)
-                            .attr('cy', position + 12)
-                            .attr('r', 12)
-                            .style('fill', color[i]);
-                    chartAreaTwo.append("text")
-                            .attr("text-anchor", "middle")
-                            .attr("dominant-baseline", "middle")
-                            .attr("font-size", "10px")
-                            .attr("x", moneyScale(d['total']))
-                            .attr('y', position + 12)
-                            .attr("font-family", "Avenir")
-                            .attr("stroke", "white")
-                            .text(uniqueGenre[i].incomeLabel + "M");
+                            .attr('cx', grossIncomeScale(d['total']) + 10)
+                            .attr('cy', position + 16)
+                            .attr('r', 16)
+                            .style('fill', color[i])
+                            .style("opacity", 0.8);
 
                     position += 85;
                 })
@@ -461,65 +425,21 @@
                     .attr("x1", marginTwo.left + 10)
                     .attr("x2", marginTwo.left + 10)
                     .attr("y1", marginTwo.top)
-                    .attr("y2", position + 122)
+                    .attr("y2", position + 50)
                     .style("stroke", "#D3D3D3")
                     .style("stroke-width", 3);
-
-                // legend
-                canvaTwo.append('rect')
-                        .attr('x', 970)
-                        .attr('y', 86)
-                        .attr('width', 200)
-                        .attr('height', 24)
-                        .attr('stroke', "")
-                        .attr('fill', "#979797");
-                canvaTwo.append('circle')
-                        .attr('cx', 1170)
-                        .attr('cy', 98)
-                        .attr('r', 12)
-                        .style('fill', "#979797");
-                canvaTwo.append("text")
-                        .attr("text-anchor", "middle")
-                        .attr("dominant-baseline", "middle")
-                        .attr("font-size", "10px")
-                        .attr("x", 1125)
-                        .attr('y', 98)
-                        .attr("font-family", "Avenir")
-                        .attr("stroke", "white")
-                        .text("Total gross income");
-
-                canvaTwo.append('rect')
-                        .attr('x', 970)
-                        .attr('y', 110)
-                        .attr('width', 150)
-                        .attr('height', 24)
-                        .attr('stroke', "")
-                        .attr('fill', '#ececec');
-                canvaTwo.append('circle')
-                        .attr('cx', 1120)
-                        .attr('cy', 122)
-                        .attr('r', 12)
-                        .style('fill', '#ececec');
-                canvaTwo.append("text")
-                        .attr("text-anchor", "middle")
-                        .attr("dominant-baseline", "middle")
-                        .attr("font-size", "10px")
-                        .attr("x", 1100)
-                        .attr('y', 122)
-                        .attr("font-family", "Avenir")
-                        .text("Budget");
 
                 let textPosition = marginTwo.top + 16;
                 uniqueGenre.forEach( (d, i) => {
                     canvaTwo.append("text")
                             .attr("text-anchor", "end")
                             .attr("dominant-baseline", "middle")
-                            .attr("font-size", "20px")
+                            .attr("font-size", "15px")
                             .attr("x", marginTwo.left)
                             .attr('y', textPosition + 13)
                             .attr("font-family", "Avenir")
                             .text(uniqueGenre[i].name);
-                    textPosition += 85;             
+                    textPosition += 85;
                 });
         });
 

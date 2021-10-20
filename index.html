@@ -1,0 +1,32 @@
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>INFO 3300 Project 1</title>
+
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+</head>
+
+<body>
+    <script>
+        d3.csv('/project1/disney.csv').then( (data) => {
+            
+            data = data.filter( (d) => {return d['Budget'] != "";}  );
+            data = data.filter( (d) => {return d['Box office'] != "";}  );
+            data = data.filter( (d) => {return d['title'] != "";}  );
+            //console.log(data);
+            // data.forEach( (d,i) => {
+            //     console.log(d['title']);
+            // });
+        });
+
+        d3.csv('/project1/disney_movies_total_gross.csv').then( (data) => {
+            console.log(data);
+            data = data.filter( (d) => {return d['genre'] != "";}  );
+            console.log(data);
+            data = data.filter( (d) => {return d['total_gross'] != 0;}  );
+            console.log(data);
+        });
+    </script>
+
+</body>
+</html>
