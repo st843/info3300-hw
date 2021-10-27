@@ -1,0 +1,110 @@
+<html>
+<head>
+    <title> INFO 3300 - HW 6</title>
+    <meta charset="UTF-8" />
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://d3js.org/topojson.v3.min.js"></script>
+
+    <style>
+        .zipoutline {
+            stroke-width: 1px;
+            stroke: white;
+            fill: none;   
+        }
+
+        .stateoutline {
+            stroke-width: 3px;
+            stroke: darkgray;
+            fill: none;
+        }
+        
+    </style>
+</head>
+
+<body>
+    <h3>Srishti Tyagi st843</h3>
+    <p id="problem1">
+        <svg id="choropleth" height="770" width="990" style="margin:20px"></svg>
+        <ul id="list"></ul>
+        <script>
+            // setting up svg
+            const svg1 = d3.select("#choropleth");
+            const width = svg1.attr("width");
+            const height = svg1.attr("height");
+            const margin = { top: 20, right: 20, bottom: 20, left:20};
+            const mapWidth = width - margin.left - margin.right;
+            const mapHeight = height - margin.top - margin.bottom;
+            const map = svg1.append("g")
+                  .attr("transform","translate("+margin.left+","+margin.top+")");
+            const list = d3.select("#list");
+
+
+            const requestData = async function () {
+                const nyincome = await d3.json("./ny_income.topo.json");
+                console.log(nyincome);
+
+                var zips = topojson.feature(nyincome, nyincome.objects.zip_codes);
+                var zipsMesh = topojson.mesh(nyincome, nyincome.objects.zip_codes);
+                var stateMesh = topojson.mesh(nyincome, nyincome.objects.state);
+                var projection = d3.geoMercator().fitSize([mapWidth, mapHeight], zips);
+                var path = d3.geoPath().projection(projection);
+                console.log(zips);
+                console.log(zipsMesh);
+
+                // color scale source: https://colorbrewer2.org/#type=sequential&scheme=YlGnBu&n=5
+                const binColors = ["#ffffcc","#a1dab4","#41b6c4","#2c7fb8","#253494"];
+
+                let values = [];
+                nyincome.objects.zip_codes.geometries.forEach( element => values.push(element.properties.median_income));
+                console.log(values);
+
+                const zipScale = d3.scaleQuantile().domain(values).range(binColors);
+                
+                map.selectAll("path.zip").data(zips.features)
+                    .join("path")
+                    .attr("class", "zip")
+                    .attr("d", path)
+                    .style('fill', d => zipScale(d.properties.median_income));
+
+
+                map.append("path").datum(zipsMesh)
+                    .attr('class', 'zipoutline')
+                    .attr('d', path);
+                
+                map.append("path").datum(stateMesh)
+                    .attr('class', 'stateoutline')
+                    .attr('d', path);
+                
+                map.append("circle")
+                    .attr('cx', projection([-76.4850, 42.4476])[0])
+                    .attr('cy', projection([-76.4850, 42.4476])[1])
+                    .attr('r', 5)
+                    .style('fill', 'black');
+
+                let thresholds = zipScale.quantiles();
+                console.log(thresholds);
+
+                // thresholds.forEach( threshold => {
+                //     list.append("li")
+                //         .text(threshold);
+                // })
+                
+                list.selectAll("li").data(thresholds)
+                    .join('li')
+                    .text(d => d);
+                
+
+            }
+
+
+            // END OF requestData
+            requestData();
+        </script>
+
+    </p>
+    
+
+
+</body>
+
+</html>
