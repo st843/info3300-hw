@@ -1,0 +1,56 @@
+<html>
+<head>
+    <title> INFO 3300 - HW 8</title>
+    <meta charset="UTF-8" />
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+    <script src="https://d3js.org/topojson.v3.min.js"></script>
+
+    <style>
+       
+    </style>
+</head>
+
+<body>
+    <h3>Srishti Tyagi st843</h3>
+    <p id="p1"></p>
+        <div id="barcodes"></div> 
+        <script>
+            
+            const requestData = async function () {
+               const barcodeData = await d3.json('./movie_barcodes.json');
+
+               console.log(barcodeData);
+               let container = d3.select('#barcodes')
+
+               barcodeData.forEach( function (d, i) {
+                   let moviediv = container.append('div');
+                   moviediv.append('h5').text(d.title);
+
+                   let canvas = moviediv.append('canvas')
+                            .attr('width', 800)
+                            .attr('height', 100);
+
+                    const context = canvas.node().getContext('2d');
+                    context.clearRect(0, 0, 800, 100);
+
+                    d.bars.forEach(  (bar) => {
+                        context.strokeStyle = bar.color;
+                        let x = bar.x + 0.5;
+                        context.beginPath();
+                        context.moveTo(x, 0);
+                        context.lineTo(x, 100);
+                        context.stroke();
+
+                    })
+               })
+
+
+            
+            };
+            // END OF REQUEST DATA
+            requestData();
+        </script>
+    
+
+</body>
+</html>
