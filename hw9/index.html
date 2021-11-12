@@ -1,0 +1,57 @@
+<html>
+<head>
+    <title> INFO 3300 - HW 9</title>
+    <meta charset="UTF-8" />
+    <script src="https://d3js.org/d3.v7.min.js"></script>
+
+    <style>
+       
+    </style>
+</head>
+
+<body>
+    <h3>Srishti Tyagi st843</h3>
+    <p id="p1">I chose the board games dataset because the data attributes
+        provided a lot of opportunity to explore interesting relationships. My main question
+        I want to answer through visualizing the data is, did people spend
+        more time playing newer board games, or older, classic board games? Essentially, what is the relationship
+        between year published and the amount of time spent playing? Through a scatterplot,
+        I will be able to answer this question to further inviestigate the distribution of data 
+        for these attributes.
+    </p>
+    <svg height="400" width="800" id="svg"> 
+    </svg>
+
+    <script>
+
+        // setting up svg
+        const svg= d3.select('svg#svg')
+
+        const width = svg.attr("width");
+        const height = svg.attr("height");
+        const margin = {top: 5, right: 30, bottom: 30, left: 30};
+
+
+        const chartWidth = width - margin.left - margin.right;
+        const chartHeight = height - margin.top - margin.bottom;
+
+        let labels = svg.append('g').attr('id', 'labels');
+        let chartArea = svg.append("g").attr("id","points")
+                            .attr("transform","translate("+margin.left+","+margin.top+")");
+
+        const datarequest = async function() {
+            const games = await d3.csv("./board-games.csv");
+            console.log(games);
+
+
+        
+
+        }
+        // end of datarequest
+        datarequest();
+
+    </script>
+
+
+</body>
+</html>
