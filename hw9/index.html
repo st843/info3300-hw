@@ -5,7 +5,13 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
 
     <style>
-       
+         .gridlines line {
+            stroke: lightgray;
+        }
+        
+        .gridlines .domain {
+            stroke: none;
+        }
     </style>
 </head>
 
@@ -13,14 +19,18 @@
     <h3>Srishti Tyagi st843</h3>
     <p id="p1">I chose the board games dataset because the data attributes
         provided a lot of opportunity to explore interesting relationships. My main question
-        I want to answer through visualizing the data is, did people spend
-        more time playing newer board games, or older, classic board games? Essentially, what is the relationship
-        between year published and the amount of time spent playing? Through a scatterplot,
+        I want to answer through visualizing the data is, did people give higher
+        ratings to newer abstract board games, or older abstract board games? Essentially, what is the relationship
+        between year published and the the rating an abstract game received? Through a scatterplot,
         I will be able to answer this question to further inviestigate the distribution of data 
         for these attributes.
     </p>
-    <svg height="400" width="800" id="svg"> 
-    </svg>
+    <div id="graph">
+        <svg height="600" width="800" id="svg"> 
+            <text id="name" x="70" y="15"  text-anchor="start" alignment-baseline="hanging"></text>
+        </svg>
+    </div>
+    
 
     <script>
 
@@ -29,7 +39,7 @@
 
         const width = svg.attr("width");
         const height = svg.attr("height");
-        const margin = {top: 5, right: 30, bottom: 30, left: 30};
+        const margin = {top: 15, right: 30, bottom: 70, left: 65};
 
 
         const chartWidth = width - margin.left - margin.right;
@@ -40,8 +50,107 @@
                             .attr("transform","translate("+margin.left+","+margin.top+")");
 
         const datarequest = async function() {
-            const games = await d3.csv("./board-games.csv");
+            let games = await d3.csv("./board-games.csv");
             console.log(games);
+
+
+            games = games.filter( (d) => {return d['category'].includes("Abstract")}  );
+            console.log(games);
+            
+            // setting up scales
+            const yearExtent = d3.extent(games, d => d['year_published']);
+            const yearScale = d3.scaleLinear().domain(yearExtent).range([0, chartWidth]);
+            console.log(yearExtent);
+
+            const playtimeExtent = d3.extent(games, d => d['average_rating']);
+            const playtimeScale = d3.scaleLinear().domain(playtimeExtent).range([chartHeight, 0]);
+            console.log(playtimeExtent);
+
+            //setting up axes
+            let leftAxis = d3.axisLeft(playtimeScale);
+            let leftGridlines = d3.axisLeft(playtimeScale)
+                                    .tickSize(-chartWidth-5)
+                                    .tickFormat("");
+
+            labels.append("g")
+                        .attr("class", "y gridlines")
+                        .attr("transform","translate("+(margin.left-5)+","+margin.top+")")
+                        .call(leftGridlines);
+            labels.append("g")
+                        .attr("class", "y axis")
+                        .attr("transform","translate("+(margin.left)+","+margin.top+")")
+                        .call(leftAxis);
+
+
+            let bottomAxis = d3.axisBottom(yearScale).tickFormat(d3.format("~f"));
+            let bottomGridlines = d3.axisBottom(yearScale).tickSize(-chartHeight+20).tickFormat("");
+        
+            labels.append("g")
+                    .attr("class", "x gridlines")
+                    .attr("transform","translate("+margin.left+","+(chartHeight+margin.top)+")")
+                    .call(bottomGridlines);
+            labels.append("g")
+                    .attr("class", "x axis")
+                    .attr("transform","translate("+margin.left+","+(chartHeight+margin.top+10)+")")
+                    .call(bottomAxis);
+
+            let points = chartArea.selectAll("circle.game").data(games)
+                .join("circle")
+                .attr("class", "game")
+                .attr("r", 5)
+                .attr("fill", "steelblue")
+                .attr("opacity", 0.8)
+                .attr("cx", d => yearScale(d["year_published"]))
+                .attr("cy", d => playtimeScale(d["average_rating"]));
+
+            points.on("mouseover", function () {
+                d3.select(this)
+                    .transition().duration(200)
+                    .attr("stroke-width", 2.5)
+                    .attr("stroke", "black")
+                    .attr('opacity', 1)
+                    .attr('r', 7);
+                
+                let name = d3.select(this).datum()['name']
+                d3.select("#name")
+                    .transition().duration(200)
+                    .text(name);
+
+            });
+            
+
+            points.on("mouseout", function () {
+                d3.select(this)
+                    .transition().duration(200)
+                    .attr("stroke-width", 0)
+                    .attr('opacity', 0.7)
+                    .attr("r", 4);
+                
+                d3.select("#name")
+                    .transition().duration(200)
+                    .text("");
+
+            });
+
+             // x axis label
+             svg.append("text")
+                .attr("class", "axis-label")
+                .attr("text-anchor", "middle")
+                .attr("x", chartWidth/2 + 50)
+                .attr("y", height - 20)
+                .text("Year Published");
+            
+            // y axis label
+            svg.append("text")
+                .attr("class", "axis-label")
+                .attr("text-anchor", "middle")
+                .attr("y", 6)
+                .attr("dy", ".75em")
+                .attr("x", -chartHeight/2)
+                .attr("transform", "rotate(-90)")
+                .text("Average Rating");
+
+
 
 
         
