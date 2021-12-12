@@ -9,12 +9,10 @@ let axis = bars.append("g")
 
 const barData = async function() {
     let penguins = await d3.csv("penguin_flippers.csv");
-    console.log(penguins);
 
     penguins = penguins.filter( d =>  d['count'] != "HANDLE_THIS_BAD_VALUE_BY_ELIMINATING_THIS_ENTIRE_ROW!");
     penguins = penguins.filter( d =>  d['flipper_length'] != "HANDLE_THIS_BAD_VALUE_BY_ELIMINATING_THIS_ENTIRE_ROW!");
 
-    console.log(penguins);
     penguins.forEach( (d, i) => {
         d['flipper_length'] = Number(d['flipper_length']);
         d['count'] = Number(d['count']);
@@ -22,7 +20,6 @@ const barData = async function() {
 
     // extents and scales
     const flipperExtent = d3.extent(penguins, d => d['flipper_length']);
-    console.log(flipperExtent);
     const flipperScale = d3.scaleLinear().domain(flipperExtent).range([10,490]);
     const countExtent = d3.extent(penguins, d => d['count']);
     const countScale = d3.scaleLinear().domain(countExtent).range([100, 0]);

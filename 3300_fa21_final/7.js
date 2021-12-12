@@ -19,19 +19,16 @@ let labels = scatter.append('g').attr('id', 'labels');
 const scatterData = async function() {
     let ages = await d3.json('olympic_ages.json');
 
-    //console.log(ages);
     const parseYear = d3.timeParse("%Y");
     ages.forEach( d => {
         d['date'] = parseYear(d['date']); 
     } );
-    console.log(ages);
+
     
 
     // extents and scales
     const timeExtent = d3.extent(ages, d => d['date']);
-    console.log(timeExtent);
     const ageExtent = d3.extent(ages, d=> d['age']);
-    console.log(ageExtent);
     const timeScale = d3.scaleTime().domain(timeExtent).range([scatterMargin.left, scatterChartWidth+20]);
     const ageScale = d3.scaleLinear().domain(ageExtent).range([scatterChartHeight, scatterMargin.top]);
     const sportScale = d3.scaleOrdinal(d3.schemeCategory10);
