@@ -34,9 +34,17 @@ const barData = async function() {
           .attr("class", "x axis")
           .call(barBottomAxis);
 
-    barArea.selectAll('rect')
+    barArea.selectAll('rect.bar')
            .data(penguins)
            .join('rect')
+           .attr('class', 'bar')
+           .attr('x', d => flipperScale(d['flipper_length']) )
+           .attr('y', d => countScale(d['count']) )
+           .attr('height', d => countScale(0) - countScale(d['count']) )
+           .attr('width', 14)
+           .attr('fill', d => colorScale(d['species']))
+           .attr('stroke', 'none')
+           .attr('opacity', 0.8);
 
 }
 
