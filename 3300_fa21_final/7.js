@@ -30,7 +30,7 @@ const scatterData = async function() {
     const timeExtent = d3.extent(ages, d => d['date']);
     const ageExtent = d3.extent(ages, d=> d['age']);
     const timeScale = d3.scaleTime().domain(timeExtent).range([scatterMargin.left, scatterChartWidth+20]);
-    const ageScale = d3.scaleLinear().domain(ageExtent).range([scatterChartHeight, scatterMargin.top]);
+    const ageScale = d3.scaleLinear().domain(ageExtent).range([scatterChartHeight, 0]);
     const sportScale = d3.scaleOrdinal(d3.schemeCategory10);
 
 
@@ -68,13 +68,17 @@ const scatterData = async function() {
         return Math.floor(Math.random() * (6) + (-3)) ;
     }
 
-    scatterArea.selectAll("circle").data(ages)
+    scatterArea.selectAll("circle.age").data(ages)
         .join("circle")
+        .attr('class', 'age')
         .attr('cx', d => timeScale(d['date']) + jitter())
         .attr('cy', d=> ageScale(d['age']))
         .attr('r', 5)
         .style('fill', d => sportScale(d['sport']))
         .attr('opacity', 0.4);
+
+        d3.select("#labels").lower()
+
 
 }
 

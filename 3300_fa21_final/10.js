@@ -7,10 +7,8 @@ const mapHeight = map.attr('height');
 const mapData = async function() {
 
     const europeTopo = await d3.json('europe.topojson');
-    console.log(europeTopo);
 
     var countries = topojson.feature(europeTopo, europeTopo.objects.europe);
-    console.log(countries.features);
 
     var projection = d3.geoMercator().fitSize([mapWidth, mapHeight], countries);
     var path = d3.geoPath().projection(projection);
