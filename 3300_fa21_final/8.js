@@ -60,8 +60,8 @@ submitButton.on("click", function() {
   //  Call addTrajectory(velocity, angle) to add one more trajectory to the *trajectories* array
   //  Call updatePlot() to update the trajectory plot
   
-  var vel = document.getElementById('velocity').value;
-  var ang = document.getElementById('angle').value;
+  var vel = Number(document.getElementById('velocity').value);
+  var ang = Number(document.getElementById('angle').value);
   // let velocityNum = velocityInput.parseInt();
   // let angleNum = angleInput.parseInt();
   addTrajectory(vel, ang);
