@@ -19,7 +19,9 @@ let trajectories = [];
 // ** Create a line generator here for your trajectories
 //   Sample trajectory data for one element in *trajectories*:  
 //        [ {"xPos":0,"yPos":0},{"xPos":11.2,"yPos":15.0},{"xPos":32.5,"yPos":49.4}... ]
-
+var lineGen = d3.line()
+                .x( d => xScale(d['xPos']) ) 
+                .y( d => yScale(d['yPos']) ); 
 
 function updatePlot() {
   // ** This function should:
@@ -29,10 +31,19 @@ function updatePlot() {
   //   (hint: .attr("stroke", d => d.color)  )
   //  Use the line generator to set up a *d* string for the path
   //  Properly handle the fact that updatePlot may be called more than once
+  console.log(trajectories);
   
+  lineChart.selectAll("path.trajectory")
+          .data(trajectories)
+          .join('path')
+          .attr('class', 'trajectory')
+          .attr('d', d => lineGen(d))
+          .style("fill", "none")
+          .style("stroke-width", 1)
+          .attr("stroke", d => d.color);
+
+  }
   
-    
-}
 
 
 // Here are some selections of input elements to help you in your coding
@@ -49,7 +60,13 @@ submitButton.on("click", function() {
   //  Call addTrajectory(velocity, angle) to add one more trajectory to the *trajectories* array
   //  Call updatePlot() to update the trajectory plot
   
-  console.log(trajectories);
+  var vel = document.getElementById('velocity').value;
+  var ang = document.getElementById('angle').value;
+  // let velocityNum = velocityInput.parseInt();
+  // let angleNum = angleInput.parseInt();
+  addTrajectory(vel, ang);
+  updatePlot();
+
   
   
 });

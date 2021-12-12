@@ -19,12 +19,13 @@ let labels = scatter.append('g').attr('id', 'labels');
 const scatterData = async function() {
     let ages = await d3.json('olympic_ages.json');
 
-
+    //console.log(ages);
     const parseYear = d3.timeParse("%Y");
     ages.forEach( d => {
         d['date'] = parseYear(d['date']); 
     } );
     console.log(ages);
+    
 
     // extents and scales
     const timeExtent = d3.extent(ages, d => d['date']);
@@ -83,6 +84,7 @@ const scatterData = async function() {
 
 // end of scatterData
 scatterData();
+
 
 
 
